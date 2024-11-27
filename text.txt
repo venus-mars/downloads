@@ -1,0 +1,1467 @@
+------------order management operational database
+
+-- Creating Database
+CREATE DATABASE ordermanage;
+
+USE ordermanage;
+-- Creating Tables
+
+-- Dimension Tables
+
+-- Dim_Customer
+CREATE TABLE Dim_Customer (
+    customer_id INT PRIMARY KEY AUTO_INCREMENT,
+    customer_name VARCHAR(100),
+    billing_address VARCHAR(255),
+    shipping_address VARCHAR(255)
+);
+
+-- Dim_Product
+CREATE TABLE Dim_Product (
+    product_id INT PRIMARY KEY AUTO_INCREMENT,
+    product_name VARCHAR(100),
+    category VARCHAR(100),
+    price DECIMAL(10, 2)
+);
+
+-- Dim_Promotion
+CREATE TABLE Dim_Promotion (
+    promotion_id INT PRIMARY KEY AUTO_INCREMENT,
+    promotion_name VARCHAR(100),
+    discount_percentage DECIMAL(5, 2)
+);
+
+-- Dim_SalesRep
+CREATE TABLE Dim_SalesRep (
+    sales_rep_id INT PRIMARY KEY AUTO_INCREMENT,
+    sales_rep_name VARCHAR(100),
+    region VARCHAR(100)
+);
+
+-- Dim_Date 
+CREATE TABLE Dim_Date (
+    date DATE PRIMARY KEY,
+    year INT,
+    quarter INT,
+    month INT,
+    day INT,
+    number_of_orders INT
+);
+
+-- Fact Table
+CREATE TABLE Fact_Order (
+    order_id INT PRIMARY KEY AUTO_INCREMENT,
+    customer_id INT,
+    product_id INT,
+    promotion_id INT,
+    sales_rep_id INT,
+    order_date DATE,
+    requested_ship_date DATE,
+    quantity INT,
+    gross_amount DECIMAL(10, 2),
+    discount_amount DECIMAL(10, 2),
+    net_amount DECIMAL(10, 2),
+    FOREIGN KEY (customer_id) REFERENCES Dim_Customer(customer_id),
+    FOREIGN KEY (product_id) REFERENCES Dim_Product(product_id),
+    FOREIGN KEY (promotion_id) REFERENCES Dim_Promotion(promotion_id),
+    FOREIGN KEY (sales_rep_id) REFERENCES Dim_SalesRep(sales_rep_id),
+    FOREIGN KEY (order_date) REFERENCES Dim_Date(date)
+);
+
+-- Inserting Values into the Tables
+-- Insert data into Dim_Customer
+INSERT INTO Dim_Customer (customer_name, billing_address, shipping_address) VALUES
+('Rajesh Kumar', '123 MG Road, Bangalore', '456 Brigade Road, Bangalore'),
+('Sneha Sharma', '789 Residency Road, Mumbai', '101 Marine Drive, Mumbai'),
+('Arjun Singh', '102 Park Street, Kolkata', '103 Salt Lake, Kolkata'),
+('Priya Iyer', '104 Anna Salai, Chennai', '105 T Nagar, Chennai'),
+('Vikram Patel', '106 CG Road, Ahmedabad', '107 SG Highway, Ahmedabad'),
+('Kiran Rao', '108 Banjara Hills, Hyderabad', '109 Jubilee Hills, Hyderabad'),
+('Manoj Nair', '110 MG Road, Pune', '111 FC Road, Pune'),
+('Neha Gupta', '112 Connaught Place, Delhi', '113 Rajouri Garden, Delhi'),
+('Suresh Menon', '114 Marine Drive, Kochi', '115 MG Road, Kochi'),
+('Anita Verma', '116 Gomti Nagar, Lucknow', '117 Hazratganj, Lucknow');
+
+-- Insert data into Dim_Product
+INSERT INTO Dim_Product (product_name, category, price) VALUES
+('Laptop', 'Electronics', 800.00),
+('Smartphone', 'Electronics', 600.00),
+('Tablet', 'Electronics', 400.00),
+('Monitor', 'Electronics', 200.00),
+('Keyboard', 'Electronics', 50.00),
+('Mouse', 'Electronics', 30.00),
+('Printer', 'Electronics', 150.00),
+('Headphones', 'Electronics', 100.00),
+('Webcam', 'Electronics', 70.00),
+('Charger', 'Electronics', 20.00);
+
+-- Insert data into Dim_Promotion
+INSERT INTO Dim_Promotion (promotion_name, discount_percentage) VALUES
+('Holiday Sale', 10.00),
+('Clearance', 20.00),
+('Black Friday', 30.00),
+('Cyber Monday', 25.00),
+('New Year Sale', 15.00),
+('Spring Sale', 10.00),
+('Summer Sale', 20.00),
+('Fall Sale', 25.00),
+('Winter Sale', 30.00),
+('Anniversary Sale', 10.00);
+
+-- Insert data into Dim_SalesRep
+INSERT INTO Dim_SalesRep (sales_rep_name, region) VALUES
+('Amit Shah', 'North'),
+('Rohit Mehta', 'South'),
+('Vikas Reddy', 'East'),
+('Anita Desai', 'West'),
+('Ravi Shankar', 'Central'),
+('Pooja Roy', 'North-East'),
+('Sunil Kumar', 'South-West'),
+('Nikita Jain', 'North-West'),
+('Alok Mishra', 'South-East'),
+('Deepa Kaul', 'Central');
+
+-- Insert data into Dim_Date
+INSERT INTO Dim_Date (date, year, quarter, month, day, number_of_orders) VALUES
+('2024-01-01', 2024, 1, 1, 1, 1),
+('2024-01-02', 2024, 1, 1, 2, 1),
+('2024-01-03', 2024, 1, 1, 3, 1),
+('2024-01-04', 2024, 1, 1, 4, 1),
+('2024-01-05', 2024, 1, 1, 5, 1),
+('2024-01-06', 2024, 1, 1, 6, 1),
+('2024-01-07', 2024, 1, 1, 7, 1),
+('2024-01-08', 2024, 1, 1, 8, 1),
+('2024-01-09', 2024, 1, 1, 9, 1),
+('2024-01-10', 2024, 1, 1, 10, 1);
+
+-- Insert data into Fact_Order
+INSERT INTO Fact_Order (customer_id, product_id, promotion_id, sales_rep_id, order_date, requested_ship_date, quantity, gross_amount, discount_amount, net_amount) VALUES
+(1, 1, 1, 1, '2024-01-01', '2024-01-05', 2, 1600.00, 160.00, 1440.00),
+(2, 2, 2, 2, '2024-01-02', '2024-01-06', 1, 600.00, 120.00, 480.00),
+(3, 3, 3, 3, '2024-01-03', '2024-01-07', 5, 2000.00, 600.00, 1400.00),
+(4, 4, 4, 4, '2024-01-04', '2024-01-08', 3, 600.00, 150.00, 450.00),
+(5, 5, 5, 5, '2024-01-05', '2024-01-09', 10, 500.00, 75.00, 425.00),
+(6, 6, 6, 6, '2024-01-06', '2024-01-10', 8, 240.00, 24.00, 216.00),
+(7, 7, 7, 7, '2024-01-07', '2024-01-11', 3, 450.00, 67.50, 382.50),
+(8, 8, 8, 8, '2024-01-08', '2024-01-12', 6, 600.00, 150.00, 450.00),
+(9, 9, 9, 9, '2024-01-09', '2024-01-13', 4, 280.00, 84.00, 196.00),
+(10, 10, 10, 10, '2024-01-10', '2024-01-14', 12, 240.00, 24.00, 216.00);
+
+-- SQL Query
+
+SELECT
+    c.customer_name AS Customer,
+    p.product_name AS Product,
+    pr.promotion_name AS Promotion,
+    s.sales_rep_name AS Sales_Representative,
+    SUM(f.net_amount) AS Total_Net_Amount
+FROM
+    Fact_Order f
+    JOIN Dim_Customer c ON f.customer_id = c.customer_id
+    JOIN Dim_Product p ON f.product_id = p.product_id
+    JOIN Dim_Promotion pr ON f.promotion_id = pr.promotion_id
+    JOIN Dim_SalesRep s ON f.sales_rep_id = s.sales_rep_id
+    JOIN Dim_Date d ON f.order_date = d.date
+GROUP BY
+    c.customer_name,
+    p.product_name,
+    pr.promotion_name,
+    s.sales_rep_name
+ORDER BY
+    Total_Net_Amount DESC;
+
+
+
+--------------Book management operational database
+
+-- Creating Database
+CREATE DATABASE IF NOT EXISTS book_management_dw;
+USE book_management_dw;
+
+-- Create dimension tables
+CREATE TABLE dim_book (
+    book_id INT AUTO_INCREMENT PRIMARY KEY,
+    book_type VARCHAR(50)
+);
+
+CREATE TABLE dim_author (
+    author_id INT AUTO_INCREMENT PRIMARY KEY,
+    author_name VARCHAR(100),
+    age INT,
+    country VARCHAR(50)
+);
+
+CREATE TABLE dim_location (
+    location_id INT AUTO_INCREMENT PRIMARY KEY,
+    location VARCHAR(50)
+);
+
+CREATE TABLE dim_publication (
+    publication_id INT AUTO_INCREMENT PRIMARY KEY,
+    publication_name VARCHAR(100),
+    country VARCHAR(50),
+    year YEAR
+);
+
+-- Create fact table
+CREATE TABLE fact_book_sales (
+    sale_id INT AUTO_INCREMENT PRIMARY KEY,
+    book_id INT,
+    author_id INT,
+    location_id INT,
+    publication_id INT,
+    quantity INT,
+    profit DECIMAL(10, 2),
+    FOREIGN KEY (book_id) REFERENCES dim_book(book_id),
+    FOREIGN KEY (author_id) REFERENCES dim_author(author_id),
+    FOREIGN KEY (location_id) REFERENCES dim_location(location_id),
+    FOREIGN KEY (publication_id) REFERENCES dim_publication(publication_id)
+);
+
+-- Inserting values
+-- Insert into dim_book
+INSERT INTO dim_book (book_type) VALUES
+('Fiction'),
+('Non-Fiction'),
+('Science'),
+('Biography');
+
+-- Insert into dim_author
+INSERT INTO dim_author (author_name, age, country) VALUES
+('Chetan Bhagat', 46, 'India'),
+('Arundhati Roy', 61, 'India'),
+('APJ Abdul Kalam', 83, 'India'),
+('Sudha Murthy', 72, 'India');
+
+-- Insert into dim_location
+INSERT INTO dim_location (location) VALUES
+('Delhi'),
+('Mumbai'),
+('Bangalore'),
+('Chennai');
+
+-- Insert into dim_publication
+INSERT INTO dim_publication (publication_name, country, year) VALUES
+('Penguin India', 'India', 1985),
+('HarperCollins India', 'India', 1992),
+('Rupa Publications', 'India', 1936),
+('Jaico Publishing House', 'India', 1946);
+
+-- Insert into fact_book_sales
+INSERT INTO fact_book_sales (book_id, author_id, location_id, publication_id, quantity, profit) VALUES
+(1, 1, 1, 1, 200, 10000.00),
+(2, 2, 2, 2, 150, 7500.00),
+(3, 3, 3, 3, 300, 15000.00),
+(4, 4, 4, 4, 100, 5000.00);
+
+-- SQL statement
+
+SELECT 
+    b.book_type,
+    l.location,
+    a.author_name,
+    p.publication_name,
+    SUM(f.quantity) AS total_quantity,
+    SUM(f.profit) AS total_profit
+FROM 
+    fact_book_sales f
+JOIN 
+    dim_book b ON f.book_id = b.book_id
+JOIN 
+    dim_author a ON f.author_id = a.author_id
+JOIN 
+    dim_location l ON f.location_id = l.location_id
+JOIN 
+    dim_publication p ON f.publication_id = p.publication_id
+GROUP BY 
+    b.book_type, l.location, a.author_name, p.publication_name
+ORDER BY 
+    total_profit DESC;
+
+
+------------------Banking enterprise
+
+-- Create database
+create database a4star;
+use a4star;
+
+-- Creating dimension tables
+-- Customer Dimension Table
+CREATE TABLE Customer (
+    customer_id INT PRIMARY KEY,
+    customer_name VARCHAR(100),
+    customer_type VARCHAR(50),
+    address VARCHAR(255),
+    phone_number VARCHAR(15),
+    email VARCHAR(100)
+);
+
+-- Account Dimension Table
+CREATE TABLE Account (
+    account_id INT PRIMARY KEY,
+    account_number VARCHAR(20),
+    account_type VARCHAR(50),
+    balance DECIMAL(15, 2)
+);
+
+-- Branch Dimension Table
+CREATE TABLE Branch (
+    branch_id INT PRIMARY KEY,
+    branch_name VARCHAR(100),
+    branch_city VARCHAR(100),
+    branch_state VARCHAR(100),
+    branch_zipcode VARCHAR(10)
+);
+
+-- Time Dimension Table
+CREATE TABLE Time (
+    time_id INT PRIMARY KEY,
+    transaction_date DATE,
+    day_of_week VARCHAR(15),
+    month VARCHAR(15),
+    quarter VARCHAR(10),
+    year INT
+);
+
+-- Create fact table
+-- Transaction Fact Table
+CREATE TABLE TransactionFact (
+    transaction_id INT PRIMARY KEY,
+    customer_id INT,
+    account_id INT,
+    branch_id INT,
+    time_id INT,
+    transaction_amount DECIMAL(15, 2),
+    transaction_type VARCHAR(50),
+    CONSTRAINT fk_customer
+        FOREIGN KEY (customer_id) REFERENCES Customer(customer_id),
+    CONSTRAINT fk_account
+        FOREIGN KEY (account_id) REFERENCES Account(account_id),
+    CONSTRAINT fk_branch
+        FOREIGN KEY (branch_id) REFERENCES Branch(branch_id),
+    CONSTRAINT fk_time
+        FOREIGN KEY (time_id) REFERENCES Time(time_id)
+);
+
+-- Inserting values into the tables
+
+-- Insert data into Customer Dimension Table
+INSERT INTO Customer (customer_id, customer_name, customer_type, address, phone_number, email)
+VALUES 
+(1, 'Rajesh Sharma', 'Individual', '101 Park Street, Kolkata', '9876543210', 'rajesh.sharma@example.com'),
+(2, 'Sunita Agarwal', 'Individual', '102 MG Road, Mumbai', '9123456789', 'sunita.agarwal@example.com'),
+(3, 'Reliance Industries', 'Corporate', '303 Nariman Point, Mumbai', '9321123456', 'info@ril.com');
+
+-- Insert data into Account Dimension Table
+INSERT INTO Account (account_id, account_number, account_type, balance)
+VALUES 
+(1, 'SAV112233', 'Savings', 250000.00),
+(2, 'CUR445566', 'Current', 1200000.00),
+(3, 'SAV778899', 'Savings', 50000.00);
+
+-- Insert data into Branch Dimension Table
+INSERT INTO Branch (branch_id, branch_name, branch_city, branch_state, branch_zipcode)
+VALUES 
+(1, 'Connaught Place Branch', 'New Delhi', 'Delhi', '110001'),
+(2, 'Bandra West Branch', 'Mumbai', 'Maharashtra', '400050'),
+(3, 'Salt Lake Branch', 'Kolkata', 'West Bengal', '700091');
+
+-- Insert data into Time Dimension Table
+INSERT INTO Time (time_id, transaction_date, day_of_week, month, quarter, year)
+VALUES 
+(1, '2024-08-09', 'Friday', 'August', 'Q3', 2024),
+(2, '2024-08-08', 'Thursday', 'August', 'Q3', 2024),
+(3, '2024-08-07', 'Wednesday', 'August', 'Q3', 2024);
+
+-- Insert data into Transaction Fact Table
+INSERT INTO TransactionFact (transaction_id, customer_id, account_id, branch_id, time_id, transaction_amount, transaction_type)
+VALUES 
+(1, 1, 1, 1, 1, 20000.00, 'Deposit'),
+(2, 2, 2, 2, 2, 150000.00, 'Withdrawal'),
+(3, 3, 3, 3, 3, 5000.00, 'Deposit');
+
+-- Display data
+SELECT * FROM TransactionFact;
+
+-- snowflake
+-- Create database
+create database sem5a4;
+ use sem5a4;
+
+-- Creating dimension tables
+ -- Customer Dimension Tables
+CREATE TABLE CustomerType (
+    customer_type_id INT PRIMARY KEY,
+    customer_type_name VARCHAR(50)
+);
+
+CREATE TABLE Customer (
+    customer_id INT PRIMARY KEY,
+    customer_name VARCHAR(100),
+    customer_type_id INT,
+    address VARCHAR(255),
+    phone_number VARCHAR(15),
+    email VARCHAR(100),
+    CONSTRAINT fk_customer_type
+        FOREIGN KEY (customer_type_id) REFERENCES CustomerType(customer_type_id)
+);
+
+-- Account Dimension Tables
+CREATE TABLE AccountType (
+    account_type_id INT PRIMARY KEY,
+    account_type_name VARCHAR(50)
+);
+
+CREATE TABLE Account (
+    account_id INT PRIMARY KEY,
+    account_number VARCHAR(20),
+    account_type_id INT,
+    customer_id INT,
+    open_date DATE,
+    balance DECIMAL(15, 2),
+    CONSTRAINT fk_account_type
+        FOREIGN KEY (account_type_id) REFERENCES AccountType(account_type_id),
+    CONSTRAINT fk_customer
+        FOREIGN KEY (customer_id) REFERENCES Customer(customer_id)
+);
+
+-- Branch Dimension Table
+CREATE TABLE Branch (
+    branch_id INT PRIMARY KEY,
+    branch_name VARCHAR(100),
+    branch_city VARCHAR(100),
+    branch_state VARCHAR(100),
+    branch_zipcode VARCHAR(10)
+);
+
+-- Time Dimension Table
+CREATE TABLE Time (
+    time_id INT PRIMARY KEY,
+    transaction_date DATE,
+    day_of_week VARCHAR(15),
+    month VARCHAR(15),
+    quarter VARCHAR(10),
+    year INT
+);
+
+-- Create fact table
+-- Transaction Fact Table
+CREATE TABLE TransactionFact (
+    transaction_id INT PRIMARY KEY,
+    account_id INT,
+    branch_id INT,
+    time_id INT,
+    transaction_amount DECIMAL(15, 2),
+    transaction_type VARCHAR(50),
+    CONSTRAINT fk_account
+        FOREIGN KEY (account_id) REFERENCES Account(account_id),
+    CONSTRAINT fk_branch
+        FOREIGN KEY (branch_id) REFERENCES Branch(branch_id),
+    CONSTRAINT fk_time
+        FOREIGN KEY (time_id) REFERENCES Time(time_id)
+);
+
+-- Inserting values into the tables
+-- Inserting values into CustomerType table
+INSERT INTO CustomerType (customer_type_id, customer_type_name)
+VALUES
+(1, 'Retail'),
+(2, 'Corporate');
+
+-- Inserting values into Customer table
+INSERT INTO Customer (customer_id, customer_name, customer_type_id, address, phone_number, email)
+VALUES
+(1, 'Rajesh Kumar', 1, '123 MG Road, Mumbai', '9876543210', 'rajesh.kumar@gmail.com'),
+(2, 'Amit Sharma', 1, '56 Lajpat Nagar, Delhi', '9123456780', 'amit.sharma@yahoo.com'),
+(3, 'Geeta Rani', 2, '78 Brigade Road, Bengaluru', '9988776655', 'geeta.rani@corporate.com'),
+(4, 'Sneha Patil', 1, '90 Koregaon Park, Pune', '8765432109', 'sneha.patil@hotmail.com');
+
+-- Inserting values into AccountType table
+INSERT INTO AccountType (account_type_id, account_type_name)
+VALUES
+(1, 'Savings'),
+(2, 'Current'),
+(3, 'Fixed Deposit');
+
+-- Inserting values into Account table
+INSERT INTO Account (account_id, account_number, account_type_id, customer_id, open_date, balance)
+VALUES
+(1, 'AC001', 1, 1, '2022-01-15', 50000.00),
+(2, 'AC002', 2, 2, '2023-03-10', 100000.00),
+(3, 'AC003', 3, 3, '2021-07-23', 1500000.00),
+(4, 'AC004', 1, 4, '2022-11-05', 75000.00);
+
+-- Inserting values into Branch table
+INSERT INTO Branch (branch_id, branch_name, branch_city, branch_state, branch_zipcode)
+VALUES
+(1, 'Mumbai Central', 'Mumbai', 'Maharashtra', '400001'),
+(2, 'Connaught Place', 'Delhi', 'Delhi', '110001'),
+(3, 'MG Road', 'Bengaluru', 'Karnataka', '560001'),
+(4, 'Koregaon Park', 'Pune', 'Maharashtra', '411001');
+
+-- Inserting values into Time table
+INSERT INTO Time (time_id, transaction_date, day_of_week, month, quarter, year)
+VALUES
+(1, '2024-01-05', 'Friday', 'January', 'Q1', 2024),
+
+(2, '2024-02-15', 'Thursday', 'February', 'Q1', 2024),
+(3, '2024-03-22', 'Wednesday', 'March', 'Q1', 2024),
+(4, '2024-04-10', 'Monday', 'April', 'Q2', 2024);
+
+-- Inserting values into TransactionFact table
+INSERT INTO TransactionFact (transaction_id, account_id, branch_id, time_id, transaction_amount, transaction_type)
+VALUES
+(1, 1, 1, 1, 5000.00, 'Deposit'),
+(2, 2, 2, 2, 10000.00, 'Withdrawal'),
+(3, 3, 3, 3, 250000.00, 'Deposit'),
+(4, 4, 4, 4, 15000.00, 'Withdrawal');
+
+-- SQL query 
+SELECT * FROM TransactionFact;
+
+
+-- galaxy
+-- Create database
+create database a4galaxy;
+use a4galaxy;
+
+--Create dimension tables 
+-- Customer Dimension Tables
+CREATE TABLE CustomerType (
+    customer_type_id INT PRIMARY KEY,
+    customer_type_name VARCHAR(50)
+);
+
+CREATE TABLE Customer (
+    customer_id INT PRIMARY KEY,
+    customer_name VARCHAR(100),
+    customer_type_id INT,
+    address VARCHAR(255),
+    phone_number VARCHAR(15),
+    email VARCHAR(100),
+    CONSTRAINT fk_customer_type
+        FOREIGN KEY (customer_type_id) REFERENCES CustomerType(customer_type_id)
+);
+
+-- Account Dimension Tables
+CREATE TABLE AccountType (
+    account_type_id INT PRIMARY KEY,
+    account_type_name VARCHAR(50)
+);
+
+CREATE TABLE Account (
+    account_id INT PRIMARY KEY,
+    account_number VARCHAR(20),
+    account_type_id INT,
+    customer_id INT,
+    open_date DATE,
+    balance DECIMAL(15, 2),
+    CONSTRAINT fk_account_type
+        FOREIGN KEY (account_type_id) REFERENCES AccountType(account_type_id),
+    CONSTRAINT fk_customer
+        FOREIGN KEY (customer_id) REFERENCES Customer(customer_id)
+);
+
+-- Branch Dimension Table
+CREATE TABLE Branch (
+    branch_id INT PRIMARY KEY,
+    branch_name VARCHAR(100),
+    branch_city VARCHAR(100),
+    branch_state VARCHAR(100),
+    branch_zipcode VARCHAR(10)
+);
+
+-- Time Dimension Table
+CREATE TABLE Time (
+    time_id INT PRIMARY KEY,
+    transaction_date DATE,
+    day_of_week VARCHAR(15),
+    month VARCHAR(15),
+    quarter VARCHAR(10),
+    year INT
+);
+
+-- Transaction Fact Table
+CREATE TABLE TransactionFact (
+    transaction_id INT PRIMARY KEY,
+    account_id INT,
+    branch_id INT,
+    time_id INT,
+    transaction_amount DECIMAL(15, 2),
+    transaction_type VARCHAR(50),
+    CONSTRAINT fk_account
+        FOREIGN KEY (account_id) REFERENCES Account(account_id),
+    CONSTRAINT fk_branch
+        FOREIGN KEY (branch_id) REFERENCES Branch(branch_id),
+    CONSTRAINT fk_time
+        FOREIGN KEY (time_id) REFERENCES Time(time_id)
+);
+
+-- Create a fact table
+-- Loan Fact Table
+CREATE TABLE LoanFact (
+    loan_id INT PRIMARY KEY,
+    customer_id INT,
+    account_id INT,
+    branch_id INT,
+    time_id INT,
+    loan_amount DECIMAL(15, 2),
+    interest_rate DECIMAL(5, 2),
+    loan_duration INT,  -- in months
+    loan_type VARCHAR(50),
+    CONSTRAINT fk_customer_loan
+        FOREIGN KEY (customer_id) REFERENCES Customer(customer_id),
+    CONSTRAINT fk_account_loan
+        FOREIGN KEY (account_id) REFERENCES Account(account_id),
+    CONSTRAINT fk_branch_loan
+        FOREIGN KEY (branch_id) REFERENCES Branch(branch_id),
+    CONSTRAINT fk_time_loan
+        FOREIGN KEY (time_id) REFERENCES Time(time_id)
+);
+--Insert values into the tables
+-- Inserting values into CustomerType table
+INSERT INTO CustomerType (customer_type_id, customer_type_name)
+VALUES
+(3, 'Retail'),
+(4, 'Corporate');
+
+-- Inserting values into Customer table
+INSERT INTO Customer (customer_id, customer_name, customer_type_id, address, phone_number, email)
+VALUES
+(5, 'Vikram Singh', 3, '5th Avenue, Jaipur', '9823456789', 'vikram.singh@gmail.com'),
+(6, 'Priya Verma', 3, 'Mall Road, Chandigarh', '9812345678', 'priya.verma@hotmail.com'),
+(7, 'Anil Kumar', 4, 'Sector 44, Gurugram', '9876543210', 'anil.kumar@corporate.com'),
+(8, 'Sanya Kapoor', 3, 'Marine Drive, Mumbai', '9123456789', 'sanya.kapoor@yahoo.com');
+
+-- Inserting values into AccountType table
+INSERT INTO AccountType (account_type_id, account_type_name)
+VALUES
+(5, 'Savings'),
+(6, 'Current'),
+(7, 'Fixed Deposit');
+
+-- Inserting values into Account table
+INSERT INTO Account (account_id, account_number, account_type_id, customer_id, open_date, balance)
+VALUES
+(9, 'AC005', 5, 5, '2023-02-10', 60000.00),
+(10, 'AC006', 6, 6, '2022-08-15', 200000.00),
+(11, 'AC007', 7, 7, '2021-12-20', 2500000.00),
+(12, 'AC008', 5, 8, '2023-05-30', 85000.00);
+
+-- Inserting values into Branch table
+INSERT INTO Branch (branch_id, branch_name, branch_city, branch_state, branch_zipcode)
+VALUES
+(5, 'Jaipur Main', 'Jaipur', 'Rajasthan', '302001'),
+(6, 'Chandigarh Central', 'Chandigarh', 'Chandigarh', '160022'),
+(7, 'Cyber Hub', 'Gurugram', 'Haryana', '122002'),
+(8, 'Nariman Point', 'Mumbai', 'Maharashtra', '400021');
+
+-- Inserting values into Time table
+INSERT INTO Time (time_id, transaction_date, day_of_week, month, quarter, year)
+VALUES
+(5, '2024-05-18', 'Thursday', 'May', 'Q2', 2024),
+(6, '2024-06-25', 'Tuesday', 'June', 'Q2', 2024),
+(7, '2024-07-12', 'Wednesday', 'July', 'Q3', 2024),
+(8, '2024-08-08', 'Friday', 'August', 'Q3', 2024);
+
+-- Inserting values into TransactionFact table
+INSERT INTO TransactionFact (transaction_id, account_id, branch_id, time_id, transaction_amount, transaction_type)
+VALUES
+(9, 9, 5, 5, 7000.00, 'Deposit'),
+(10, 10, 6, 6, 15000.00, 'Withdrawal'),
+(11, 11, 7, 7, 300000.00, 'Deposit'),
+(12, 12, 8, 8, 20000.00, 'Withdrawal');
+
+-- Inserting values into LoanFact table
+INSERT INTO LoanFact (loan_id, customer_id, account_id, branch_id, time_id, loan_amount, interest_rate, loan_duration, loan_type)
+VALUES
+(9, 5, 9, 5, 5, 500000.00, 7.5, 60, 'Home Loan'),
+(10, 6, 10, 6, 6, 300000.00, 8.0, 36, 'Car Loan'),
+(11, 7, 11, 7, 7, 1500000.00, 6.5, 120, 'Business Loan'),
+(12, 8, 12, 8, 8, 250000.00, 7.0, 48, 'Personal Loan');
+
+--SQL query
+SELECT * FROM TransactionFact;
+SELECT * FROM LoanFact;
+
+
+
+------------------------------------ healthcare enterprise
+-- star
+-- Create database
+create database a5star;
+use a5star;
+
+-- Create tables
+-- Dimension Table: Doctor
+CREATE TABLE Doctor (
+    Doctor_ID INT PRIMARY KEY,
+    Doctor_Name VARCHAR(100),
+    Specialization VARCHAR(100),
+    Phone_Number VARCHAR(15),
+    Email VARCHAR(100),
+    Work_Schedule VARCHAR(100)
+);
+
+-- Dimension Table: Patient
+CREATE TABLE Patient (
+    Patient_ID INT PRIMARY KEY,
+    Patient_Name VARCHAR(100),
+    Gender VARCHAR(10),
+    Date_of_Birth DATE,
+    Address VARCHAR(200),
+    Phone_Number VARCHAR(15)
+);
+
+-- Dimension Table: Date
+CREATE TABLE Date_Dim (
+    Date_ID INT PRIMARY KEY,
+    Date DATE,
+    Day VARCHAR(20),
+    Month VARCHAR(20),
+    Year INT
+);
+
+-- Fact Table
+CREATE TABLE Fact (
+    Doctor_ID INT,
+    Patient_ID INT,
+    Date_ID INT,
+    Diagnosis VARCHAR(255),
+    Prescription VARCHAR(255),
+    Treatment_Provided VARCHAR(255),
+    Duration_of_Visit INT,
+    FOREIGN KEY (Doctor_ID) REFERENCES Doctor(Doctor_ID),
+    FOREIGN KEY (Patient_ID) REFERENCES Patient(Patient_ID),
+    FOREIGN KEY (Date_ID) REFERENCES Date_Dim(Date_ID)
+);
+
+-- Insert values into the tables
+-- Insert data into Doctor table
+INSERT INTO Doctor (Doctor_ID, Doctor_Name, Specialization, Phone_Number, Email, Work_Schedule) VALUES
+(1, 'Dr. Aditi Sharma', 'Cardiology', '9876543210', 'aditi.sharma@example.com', 'Mon-Fri 9AM-5PM'),
+(2, 'Dr. Rajesh Kumar', 'Neurology', '9988776655', 'rajesh.kumar@example.com', 'Mon-Sat 10AM-6PM'),
+(3, 'Dr. Priya Patel', 'Orthopedics', '8899776655', 'priya.patel@example.com', 'Tue-Sun 11AM-7PM'),
+(4, 'Dr. Arun Mehta', 'General Medicine', '9001122334', 'arun.mehta@example.com', 'Mon-Fri 9AM-4PM'),
+(5, 'Dr. Neha Reddy', 'Pediatrics', '9871234567', 'neha.reddy@example.com', 'Mon-Sat 8AM-3PM');
+
+-- Insert data into Patient table
+INSERT INTO Patient (Patient_ID, Patient_Name, Gender, Date_of_Birth, Address, Phone_Number) VALUES
+(1, 'Ravi Kumar', 'Male', '1980-04-15', '123 Main Street, Delhi', '9956887744'),
+(2, 'Anjali Singh', 'Female', '1992-06-22', '456 Elm Street, Mumbai', '9944556677'),
+(3, 'Amit Verma', 'Male', '1975-08-30', '789 Oak Street, Bangalore', '9876543210'),
+(4, 'Sita Sharma', 'Female', '1985-12-10', '321 Pine Street, Chennai', '9556677889'),
+(5, 'Kiran Patel', 'Male', '1990-11-05', '654 Maple Street, Hyderabad', '9638527410');
+
+-- Insert data into Date_Dim table
+INSERT INTO Date_Dim (Date_ID, Date, Day, Month, Year) VALUES
+(1, '2024-09-01', 'Sunday', 'September', 2024),
+(2, '2024-09-02', 'Monday', 'September', 2024),
+(3, '2024-09-03', 'Tuesday', 'September', 2024),
+(4, '2024-09-04', 'Wednesday', 'September', 2024),
+(5, '2024-09-05', 'Thursday', 'September', 2024);
+
+-- Insert data into Fact table
+INSERT INTO Fact (Doctor_ID, Patient_ID, Date_ID, Diagnosis, Prescription, Treatment_Provided, Duration_of_Visit) VALUES
+(1, 1, 1, 'Hypertension', 'Amlodipine 5mg', 'Blood Pressure Management', 30),
+(2, 2, 2, 'Migraine', 'Sumatriptan 50mg', 'Headache Relief', 45),
+(3, 3, 3, 'Fractured Femur', 'Calcium Supplements', 'Orthopedic Treatment', 60),
+(4, 4, 4, 'Diabetes', 'Metformin 500mg', 'Blood Sugar Control', 40),
+(5, 5, 5, 'Gastroenteritis', 'Oral Rehydration Salts', 'Hydration and Electrolyte Management', 50);
+
+
+
+
+ 
+SQL Query Result:
+-- Query execution
+-- Sql query that retrieves information
+SELECT
+    p.Patient_Name,
+    d.Doctor_Name,
+    f.Diagnosis,
+    dd.Date,
+    dd.Day,
+    dd.Month,
+    dd.Year
+FROM
+    Fact f
+JOIN
+    Doctor d ON f.Doctor_ID = d.Doctor_ID
+JOIN
+    Patient p ON f.Patient_ID = p.Patient_ID
+JOIN
+    Date_Dim dd ON f.Date_ID = dd.Date_ID;
+
+-- snowflake
+-- Create database
+CREATE DATABASE a5snowflake;
+USE a5snowflake;
+
+-- Create tables
+-- Dimension Table: Doctor
+CREATE TABLE Doctor (
+    Doctor_ID INT PRIMARY KEY,
+    Doctor_Name VARCHAR(100),
+    Specialization VARCHAR(100),
+    Phone_Number VARCHAR(15),
+    Email VARCHAR(100),
+    Work_Schedule VARCHAR(100)
+);
+
+-- Dimension Table: Patient
+CREATE TABLE Patient (
+    Patient_ID INT PRIMARY KEY,
+    OPD_ID INT,
+    Patient_Name VARCHAR(100),
+    Gender VARCHAR(10),
+    Date_of_Birth DATE,
+    Address VARCHAR(200),
+    Phone_Number VARCHAR(15)
+);
+
+-- Dimension Table: Date
+CREATE TABLE Date_Dim (
+    Date_ID INT PRIMARY KEY,
+    Date DATE,
+    Day VARCHAR(20),
+    Month VARCHAR(20),
+    Year INT
+);
+
+-- Fact Table
+CREATE TABLE Fact (
+    OPD_ID INT PRIMARY KEY,
+    Doctor_ID INT,
+    Patient_ID INT,
+    Date_ID INT,
+    Diagnosis VARCHAR(255),
+    Prescription VARCHAR(255),
+    Treatment_Provided VARCHAR(255),
+    Duration_of_Visit INT,
+    FOREIGN KEY (Doctor_ID) REFERENCES Doctor(Doctor_ID),
+    FOREIGN KEY (Patient_ID) REFERENCES Patient(Patient_ID),
+    FOREIGN KEY (Date_ID) REFERENCES Date_Dim(Date_ID)
+);
+
+-- Dimension Table: Specialization
+CREATE TABLE Specialization (
+    Specialization_ID INT PRIMARY KEY,
+    Specialization_Name VARCHAR(100)
+);
+
+-- Modify Doctor Table to use Specialization
+ALTER TABLE Doctor ADD Specialization_ID INT;
+ALTER TABLE Doctor ADD FOREIGN KEY (Specialization_ID) REFERENCES Specialization(Specialization_ID);
+
+-- New Dimension Table: OPD Details
+CREATE TABLE OPD_Details (
+    OPD_Details_ID INT PRIMARY KEY,
+    Room_Number INT,
+    Floor_Number INT
+);
+
+ALTER TABLE Patient ADD FOREIGN KEY (OPD_ID) REFERENCES OPD_Details(OPD_Details_ID);
+
+-- Insert values into the tables 
+
+-- Insert data into Specialization table
+INSERT INTO Specialization (Specialization_ID, Specialization_Name)
+VALUES
+    (1, 'Internal Medicine'),
+    (2, 'Surgery'),
+    (3, 'Family Medicine');
+
+-- Insert data into Doctor table
+INSERT INTO Doctor (Doctor_ID, Doctor_Name, Specialization, Phone_Number, Email, Work_Schedule, Specialization_ID)
+VALUES
+    (1, 'Dr. Amit Sharma', 'Cardiologist', '9812345678', 'amit.sharma@example.com', '9 AM - 5 PM', 1),
+    (2, 'Dr. Priya Patel', 'Dermatologist', '9823456789', 'priya.patel@example.com', '10 AM - 6 PM', 2),
+    (3, 'Dr. Rajesh Kumar', 'Pediatrician', '9834567890', 'rajesh.kumar@example.com', '8 AM - 4 PM', 3),
+    (4, 'Dr. Anjali Mehta', 'Orthopedic', '9845678901', 'anjali.mehta@example.com', '9 AM - 5 PM', 1),
+    (5, 'Dr. Sandeep Agarwal', 'General Practitioner', '9856789012', 'sandeep.agarwal@example.com', '9 AM - 5 PM', 2);
+
+-- Insert data into OPD_Details table
+INSERT INTO OPD_Details (OPD_Details_ID, Room_Number, Floor_Number)
+VALUES
+    (1, 101, 1),
+    (2, 102, 1),
+    (3, 201, 2),
+    (4, 202, 2),
+    (5, 301, 3);
+
+-- Insert data into Patient table
+INSERT INTO Patient (Patient_ID, OPD_ID, Patient_Name, Gender, Date_of_Birth, Address, Phone_Number)
+VALUES
+    (1, 1, 'Aarti Desai', 'Female', '1985-04-15', 'Mumbai, Maharashtra', '9876543210'),
+    (2, 2, 'Ravi Kumar', 'Male', '1990-07-22', 'Delhi, Delhi', '9765432109'),
+    (3, 3, 'Sneha Patel', 'Female', '1982-12-10', 'Ahmedabad, Gujarat', '9654321098'),
+    (4, 4, 'Rohan Singh', 'Male', '1975-11-30', 'Bangalore, Karnataka', '9543210987'),
+    (5, 5, 'Pooja Verma', 'Female', '1995-08-01', 'Chennai, Tamil Nadu', '9432109876');
+
+-- Insert data into Date_Dim table
+INSERT INTO Date_Dim (Date_ID, Date, Day, Month, Year)
+VALUES
+    (1, '2024-08-01', 'Thursday', 'August', 2024),
+    (2, '2024-08-15', 'Thursday', 'August', 2024),
+    (3, '2024-09-01', 'Sunday', 'September', 2024),
+    (4, '2024-09-10', 'Tuesday', 'September', 2024),
+    (5, '2024-10-01', 'Tuesday', 'October', 2024);
+
+-- Insert data into Fact table
+INSERT INTO Fact (OPD_ID, Doctor_ID, Patient_ID, Date_ID, Diagnosis, Prescription, Treatment_Provided, Duration_of_Visit)
+VALUES
+    (1, 1, 1, 1, 'Hypertension', 'Amlodipine', 'Blood Pressure Management', 30),
+    (2, 2, 2, 2, 'Acne', 'Clindamycin Gel', 'Topical Treatment', 45),
+    (3, 3, 3, 3, 'Fever', 'Paracetamol', 'Fever Management', 30),
+    (4, 4, 4, 4, 'Fracture', 'Cast Application', 'Bone Setting', 60),
+    (5, 5, 5, 5, 'Routine Checkup', 'Multivitamins', 'General Health Checkup', 20);
+    
+Snowflake Schema:
+ 
+SQL Query Result:
+-- Sql query
+-- Query to retrieve details
+SELECT 
+    p.Patient_Name,
+    p.Gender,
+    p.Date_of_Birth,
+    d.Doctor_Name,
+    f.Diagnosis,
+    f.Prescription,
+    f.Treatment_Provided,
+    dd.Date AS Visit_Date,
+    dd.Day,
+    dd.Month,
+    dd.Year
+FROM 
+    Fact f
+JOIN 
+    Patient p ON f.Patient_ID = p.Patient_ID
+JOIN 
+    Doctor d ON f.Doctor_ID = d.Doctor_ID
+JOIN 
+    Date_Dim dd ON f.Date_ID = dd.Date_ID
+ORDER BY 
+    dd.Date;
+
+-- galaxy
+
+-- Create database
+CREATE DATABASE a5galaxy;
+USE a5galaxy;
+
+-- Create tables
+-- Dimension Table: Specialization
+CREATE TABLE Specialization (
+    Specialization_ID INT PRIMARY KEY,
+    Specialization_Name VARCHAR(100)
+);
+
+-- Dimension Table: Doctor
+CREATE TABLE Doctor (
+    Doctor_ID INT PRIMARY KEY,
+    Doctor_Name VARCHAR(100),
+    Specialization_ID INT,
+    Phone_Number VARCHAR(15),
+    Email VARCHAR(100),
+    Work_Schedule VARCHAR(100),
+    FOREIGN KEY (Specialization_ID) REFERENCES Specialization(Specialization_ID)
+);
+
+-- Dimension Table: OPD Details
+CREATE TABLE OPD_Details (
+    OPD_Details_ID INT PRIMARY KEY,
+    Room_Number INT,
+    Floor_Number INT
+);
+
+-- Dimension Table: Patient
+CREATE TABLE Patient (
+    Patient_ID INT PRIMARY KEY,
+    OPD_ID INT,
+    Patient_Name VARCHAR(100),
+    Gender VARCHAR(10),
+    Date_of_Birth DATE,
+    Address VARCHAR(200),
+    Phone_Number VARCHAR(15),
+    FOREIGN KEY (OPD_ID) REFERENCES OPD_Details(OPD_Details_ID)
+);
+
+-- Dimension Table: Date
+CREATE TABLE Date_Dim (
+    Date_ID INT PRIMARY KEY,
+    Date DATE,
+    Day VARCHAR(20),
+    Month VARCHAR(20),
+    Year INT
+);
+
+-- Dimension Table: Payment_Method
+CREATE TABLE Payment_Method (
+    Payment_Method_ID INT PRIMARY KEY,
+    Method_Name VARCHAR(50)
+);
+
+-- Dimension Table: Insurance
+CREATE TABLE Insurance (
+    Insurance_ID INT PRIMARY KEY,
+    Insurance_Name VARCHAR(100),
+    Coverage_Details TEXT
+);
+
+-- New Dimension Table: Treatment
+CREATE TABLE Treatment (
+    Treatment_ID INT PRIMARY KEY,
+    Treatment_Name VARCHAR(255),
+    Treatment_Type VARCHAR(100),
+    Description TEXT
+);
+
+
+-- Fact Table: General
+CREATE TABLE Fact_general (
+    Treatment_ID INT PRIMARY KEY,
+    Doctor_ID INT,
+    Patient_ID INT,
+    Date_ID INT,
+    Diagnosis VARCHAR(255),
+    Prescription VARCHAR(255),
+    Treatment_Provided VARCHAR(255),
+    Duration_of_Visit INT,
+    FOREIGN KEY (Treatment_ID) REFERENCES Treatment(Treatment_ID),
+    FOREIGN KEY (Doctor_ID) REFERENCES Doctor(Doctor_ID),
+    FOREIGN KEY (Patient_ID) REFERENCES Patient(Patient_ID),
+    FOREIGN KEY (Date_ID) REFERENCES Date_Dim(Date_ID)
+);
+
+-- Fact Table: Cost
+CREATE TABLE Fact_Cost (
+    Cost_ID INT PRIMARY KEY,
+    Treatment_ID INT,  -- Foreign key to link with Fact_general
+    Treatment_Cost DECIMAL(10, 2),
+    Consultation_Fee DECIMAL(10, 2),
+    Payment_Method_ID INT,
+    Insurance_ID INT,
+    FOREIGN KEY (Treatment_ID) REFERENCES Treatment(Treatment_ID),
+    FOREIGN KEY (Payment_Method_ID) REFERENCES Payment_Method(Payment_Method_ID),
+    FOREIGN KEY (Insurance_ID) REFERENCES Insurance(Insurance_ID)
+);
+
+-- Insert values
+-- Insert values into Specialization table
+INSERT INTO Specialization (Specialization_ID, Specialization_Name) VALUES
+(1, 'Cardiology'),
+(2, 'Orthopedics'),
+(3, 'Dermatology'),
+(4, 'Pediatrics'),
+(5, 'Neurology');
+
+-- Insert values into Doctor table
+INSERT INTO Doctor (Doctor_ID, Doctor_Name, Specialization_ID, Phone_Number, Email, Work_Schedule) VALUES
+(1, 'Dr. Rajesh Kumar', 1, '9876543210', 'rajesh.kumar@example.com', 'Mon-Fri 9AM-5PM'),
+(2, 'Dr. Priya Sharma', 2, '9123456789', 'priya.sharma@example.com', 'Mon-Sat 10AM-6PM'),
+(3, 'Dr. Arun Patel', 3, '9988776655', 'arun.patel@example.com', 'Tue-Sun 11AM-7PM'),
+(4, 'Dr. Sunita Rao', 4, '9654321098', 'sunita.rao@example.com', 'Mon-Fri 8AM-4PM'),
+(5, 'Dr. Neeraj Singh', 5, '9008007000', 'neeraj.singh@example.com', 'Wed-Sat 9AM-5PM');
+
+-- Insert values into OPD_Details table
+INSERT INTO OPD_Details (OPD_Details_ID, Room_Number, Floor_Number) VALUES
+(1, 101, 1),
+(2, 102, 1),
+(3, 201, 2),
+(4, 202, 2),
+(5, 301, 3);
+
+-- Insert values into Patient table
+INSERT INTO Patient (Patient_ID, OPD_ID, Patient_Name, Gender, Date_of_Birth, Address, Phone_Number) VALUES
+(1, 1, 'Amit Verma', 'Male', '1985-07-15', '123, Main Street, Delhi', '9876543210'),
+(2, 2, 'Sita Patel', 'Female', '1990-05-20', '456, Second Street, Mumbai', '9123456789'),
+(3, 3, 'Ravi Kumar', 'Male', '1982-11-25', '789, Third Street, Bangalore', '9988776655'),
+(4, 4, 'Pooja Agarwal', 'Female', '1995-02-10', '101, Fourth Street, Chennai', '9654321098'),
+(5, 5, 'Anil Joshi', 'Male', '1978-09-05', '202, Fifth Street, Hyderabad', '9008007000');
+
+-- Insert values into Date_Dim table
+INSERT INTO Date_Dim (Date_ID, Date, Day, Month, Year) VALUES
+(1, '2024-09-01', 'Sunday', 'September', 2024),
+(2, '2024-09-05', 'Thursday', 'September', 2024),
+(3, '2024-09-10', 'Tuesday', 'September', 2024),
+(4, '2024-09-15', 'Sunday', 'September', 2024),
+(5, '2024-09-20', 'Friday', 'September', 2024);
+
+-- Insert values into Treatment table
+INSERT INTO Treatment (Treatment_ID, Treatment_Name, Treatment_Type, Description) VALUES
+(1, 'Cardiac Checkup', 'Routine', 'Routine cardiac checkup including ECG and stress test.'),
+(2, 'Fracture Treatment', 'Emergency', 'Treatment for bone fractures including casting and pain management.'),
+(3, 'Skin Allergy', 'Consultation', 'Consultation and treatment for skin allergies and rashes.'),
+(4, 'Child Vaccination', 'Preventive', 'Vaccination for various childhood diseases.'),
+(5, 'Neurological Assessment', 'Consultation', 'Assessment and diagnosis of neurological conditions.');
+
+-- Insert values into Fact_general table
+INSERT INTO Fact_general (Treatment_ID, Doctor_ID, Patient_ID, Date_ID, Diagnosis, Prescription, Treatment_Provided, Duration_of_Visit) VALUES
+(1, 1, 1, 1, 'Normal Checkup', 'No Medication', 'Cardiac Checkup', 30),
+(2, 2, 2, 2, 'Fracture of Left Arm', 'Painkillers, Cast', 'Fracture Treatment', 60),
+(3, 3, 3, 3, 'Allergic Dermatitis', 'Anti-Allergy Cream', 'Skin Allergy Treatment', 45),
+(4, 4, 4, 4, 'Routine Vaccination', 'Vaccines Administered', 'Child Vaccination', 30),
+(5, 5, 5, 5, 'Neurological Examination', 'Prescribed Neurological Tests', 'Neurological Assessment', 50);
+
+-- Insert values into Payment_Method table
+INSERT INTO Payment_Method (Payment_Method_ID, Method_Name) VALUES
+(1, 'Cash'),
+(2, 'Credit Card'),
+(3, 'Debit Card'),
+(4, 'Digital Payment'),
+(5, 'Insurance');
+
+-- Insert values into Insurance table
+INSERT INTO Insurance (Insurance_ID, Insurance_Name, Coverage_Details) VALUES
+(1, 'Star Health', 'Covers general treatments and hospitalization.'),
+(2, 'Max Bupa', 'Includes coverage for critical illnesses and surgery.'),
+(3, 'HDFC Ergo', 'Covers outpatient consultations and emergency services.'),
+(4, 'Religare Health', 'Offers comprehensive health insurance including pre and post-hospitalization.'),
+(5, 'ICICI Lombard', 'Provides coverage for various medical treatments and emergencies.');
+
+-- Insert values into Fact_Cost table
+INSERT INTO Fact_Cost (Cost_ID, Treatment_ID, Treatment_Cost, Consultation_Fee, Payment_Method_ID, Insurance_ID) VALUES
+(1, 1, 1500.00, 500.00, 4, 1),
+(2, 2, 3000.00, 1000.00, 2, 2),
+(3, 3, 1200.00, 400.00, 1, NULL),
+(4, 4, 800.00, 300.00, 5, 4),
+(5, 5, 2000.00, 600.00, 3, 3);
+
+
+
+
+
+
+
+
+Galaxy Schema:
+ 
+ 
+SQL Query Result:
+-- Sql query
+-- Query to calculate total treatment cost and consultation fees, grouped by insurance provider
+SELECT 
+    i.Insurance_Name,
+    SUM(fc.Treatment_Cost) AS Total_Treatment_Cost,
+    SUM(fc.Consultation_Fee) AS Total_Consultation_Fee
+FROM 
+    Fact_Cost fc
+JOIN 
+    Insurance i ON fc.Insurance_ID = i.Insurance_ID
+GROUP BY 
+    i.Insurance_Name
+ORDER BY 
+    Total_Treatment_Cost DESC;
+
+
+
+-- apriori
+import pandas as pd
+from mlxtend.frequent_patterns import apriori, association_rules
+
+# Load the CSV file
+file_path = 'StudentPerformanceFactors.csv'  # Use the correct path to the file
+df = pd.read_csv(file_path)
+
+# Inspect the first few rows to understand the structure of the data
+print("Data Preview:")
+print(df.head())
+
+# Step 1: Preprocessing the Data
+# Convert numerical features to categorical bins
+df['Hours_Studied_Bin'] = pd.cut(df['Hours_Studied'], bins=[0, 20, 30, 40], labels=['Low', 'Medium', 'High'])
+df['Attendance_Bin'] = pd.cut(df['Attendance'], bins=[0, 60, 80, 100], labels=['Low', 'Medium', 'High'])
+
+# One-hot encode categorical features
+df_encoded = pd.get_dummies(df[['Hours_Studied_Bin', 'Attendance_Bin', 'Parental_Involvement', 'Distance_from_Home', 'Gender']], drop_first=True)
+
+# If 'Exam_Score' is important, you may need to bin it as well
+df_encoded['Exam_Score_Bin'] = pd.cut(df['Exam_Score'], bins=[0, 60, 75, 100], labels=['Low', 'Medium', 'High'])
+df_encoded = pd.get_dummies(df_encoded, columns=['Exam_Score_Bin'], drop_first=True)
+
+# Step 2: Apply the Apriori Algorithm
+min_support = 0.5  # Example: at least 50% of transactions
+frequent_itemsets = apriori(df_encoded, min_support=min_support, use_colnames=True)
+
+# Step 3: Generate Association Rules
+min_confidence = 0.7  # Example: at least 70% confidence
+rules = association_rules(frequent_itemsets, metric="confidence", min_threshold=min_confidence)
+
+# Display the frequent itemsets and the association rules
+print("\nFrequent Itemsets:")
+print(frequent_itemsets)
+
+print("\nAssociation Rules:")
+print(rules)
+
+
+-- kmeans
+
+# Importing necessary libraries
+import pandas as pd
+from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
+
+# Load the dataset
+file_path = 'Iris.csv'  # Replace with your actual file path if needed
+df = pd.read_csv(file_path)
+
+# Extract the numerical features for clustering (not using species)
+X = df[['SepalLengthCm', 'SepalWidthCm', 'PetalLengthCm', 'PetalWidthCm']]
+
+# Initialize KMeans with 3 clusters (since we know there are 3 species of Iris flowers)
+kmeans = KMeans(n_clusters=3, random_state=42)
+kmeans.fit(X)  # Centroids are initialized and iteratively updated using .fit() method
+
+# Points are assigned to the nearest centroids 
+df['Cluster'] = kmeans.labels_
+
+# Extract the centroid coordinates
+centroids = kmeans.cluster_centers_
+
+# Visualize the clusters using two features: PetalLengthCm and PetalWidthCm
+plt.scatter(df['PetalLengthCm'], df['PetalWidthCm'], c=df['Cluster'], cmap='rainbow', label='Data Points')
+plt.scatter(centroids[:, 2], centroids[:, 3], marker='X', s=200, c='black', label='Centroids')  # Plot centroids
+plt.title('K-Means Clustering on Iris Dataset with Centroids')
+plt.xlabel('Petal Length (cm)')
+plt.ylabel('Petal Width (cm)')
+plt.legend()
+plt.show()
+
+# Compare the clusters to the actual species
+comparison = pd.crosstab(df['Cluster'], df['Species'])
+print(comparison)
+
+
+-- hierarchical
+
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import StandardScaler
+from scipy.cluster.hierarchy import dendrogram, linkage
+from sklearn.cluster import AgglomerativeClustering
+from sklearn.metrics import confusion_matrix, accuracy_score
+import seaborn as sns
+
+# Load the Iris dataset
+iris_df = pd.read_csv('Iris.csv')
+
+# Inspect the data
+print(iris_df.head())
+
+# Preprocessing - Removing 'Id' and 'Species' columns for clustering (we are only interested in features)
+X = iris_df.drop(columns=['Id', 'Species'])
+
+# Standardize the data to bring all features to the same scale
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Step 1: Create Dendrogram to decide the number of clusters
+linked = linkage(X_scaled, method='average')  # Use average linkage
+
+# Plot the dendrogram
+plt.figure(figsize=(10, 7))
+dendrogram(linked, orientation='top', distance_sort='descending', show_leaf_counts=True)
+plt.title('Dendrogram for Hierarchical Clustering (Average Linkage)')
+plt.xlabel('Data Points')
+plt.ylabel('Euclidean Distance')
+plt.show()
+
+# Step 2: Applying Agglomerative Clustering with 'average' linkage
+agglomerative_clustering = AgglomerativeClustering(n_clusters=3, linkage='average')
+clusters = agglomerative_clustering.fit_predict(X_scaled)
+
+# Add cluster results to the original dataframe
+iris_df['Cluster'] = clusters
+
+# Print the cluster assignments
+print(iris_df[['Species', 'Cluster']].head(10))
+
+# Step 3: Evaluating the clustering by comparing with the original labels (for educational purposes)
+# Convert species to numerical labels for comparison
+iris_df['Species_Label'] = iris_df['Species'].factorize()[0]
+
+# Confusion matrix and accuracy
+conf_matrix = confusion_matrix(iris_df['Species_Label'], iris_df['Cluster'])
+accuracy = accuracy_score(iris_df['Species_Label'], iris_df['Cluster'])
+
+print("\nConfusion Matrix:")
+print(conf_matrix)
+print(f"\nAccuracy: {accuracy*100:.2f}%")
+
+# Step 4: Visualizing the clusters - Scatter plot of Sepal features with custom colors
+plt.figure(figsize=(10, 7))
+sns.scatterplot(x='SepalLengthCm', y='SepalWidthCm', hue='Cluster', palette=['red', 'yellow', 'blue'], data=iris_df)
+plt.title('Cluster Visualization (Sepal Features)')
+plt.xlabel('Sepal Length (cm)')
+plt.ylabel('Sepal Width (cm)')
+plt.legend(title='Cluster')
+plt.show()
+
+# Step 5: Visualizing the clusters - Scatter plot of Petal features with custom colors
+plt.figure(figsize=(10, 7))
+sns.scatterplot(x='PetalLengthCm', y='PetalWidthCm', hue='Cluster', palette=['red', 'yellow', 'blue'], data=iris_df)
+plt.title('Cluster Visualization (Petal Features)')
+plt.xlabel('Petal Length (cm)')
+plt.ylabel('Petal Width (cm)')
+plt.legend(title='Cluster')
+plt.show()
+
+# Optional: Test with other linkages (uncomment to run)
+# agglomerative_clustering = AgglomerativeClustering(n_clusters=3, linkage='complete')
+# clusters = agglomerative_clustering.fit_predict(X_scaled)
+
+-- naive
+
+# Step 1: Importing Libraries
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import accuracy_score, confusion_matrix
+import numpy as np
+
+# Step 2: Data Collection
+# Load the dataset
+df = pd.read_csv('StudentPerformanceFactors.csv')
+
+# Display basic information about the dataset
+print("Dataset Information:")
+print(df.info())
+
+# Step 3: Exploratory Data Analysis (EDA) and Feature Engineering
+# Checking for missing values
+print("Missing values in the dataset:")
+print(df.isnull().sum())
+
+# Handle missing values (optional) - fill missing values in 'Distance_from_Home' with the most frequent value
+df['Distance_from_Home'].fillna(df['Distance_from_Home'].mode()[0], inplace=True)
+
+# Display the first few rows to understand the dataset
+print("First few rows of the dataset:")
+print(df.head())
+
+# Feature Engineering: If necessary, encode categorical features using one-hot encoding
+df_encoded = pd.get_dummies(df, drop_first=True)
+
+# Checking correlations (optional) if the dataset is numerical
+correlation_matrix = df_encoded.corr()
+print("Correlation Matrix:")
+print(correlation_matrix)
+
+# Step 4: Creating Frequency Tables
+# Splitting the dataset into features (X) and the target (y)
+X = df_encoded.drop('Exam_Score', axis=1)  # Drop the target variable from the features
+y = df_encoded['Exam_Score']  # Set the target variable
+
+# Display unique classes in the target column
+print("Target Classes (Exam Scores):", np.unique(y))
+
+# Creating a frequency table for each feature
+for column in X.columns:
+    print(f"Frequency Table for {column}:")
+    print(X[column].value_counts())
+    print()
+
+# Step 5: Calculating Prior Probabilities and Likelihoods
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train a Naive Bayes model
+model = GaussianNB()
+model.fit(X_train, y_train)
+
+# Calculate prior probabilities (P(A)) and likelihoods (P(B|A)) using the training set
+class_priors = model.class_prior_  # Prior probabilities for each class
+print("Class Priors (P(A)):")
+print(class_priors)
+
+# Likelihood for each feature given the class (P(B|A)) can be obtained from the model
+print("Feature Likelihoods (P(B|A)):")
+print(model.theta_)  # Mean of each feature per class
+print(model.sigma_)  # Variance of each feature per class
+
+# Step 6: Applying Bayes' Theorem for Prediction
+# Make predictions on the test set
+y_pred = model.predict(X_test)
+
+# Display the predictions
+print("Predictions on test data:")
+print(y_pred)
+
+# Evaluate the model using accuracy and confusion matrix
+accuracy = accuracy_score(y_test, y_pred)
+conf_matrix = confusion_matrix(y_test, y_pred)
+
+print(f"Accuracy: {accuracy}")
+print("Confusion Matrix:")
+print(conf_matrix)
+
+# Probability of a specific test case using Bayes' Theorem manually
+# For demonstration, let’s calculate P(Yes|features) for a sample test case
+sample = X_test.iloc[0]  # Taking the first test case
+probabilities = model.predict_proba([sample])
+
+print("Probabilities for the sample test case:")
+print(probabilities)
+
+-- decision
+
+# Step 1: Importing necessary libraries
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+from sklearn import tree
+import matplotlib.pyplot as plt
+
+# Step 2: Load the dataset
+data = pd.read_csv('german_credit_data.csv')
+
+# Step 3: Data Preprocessing
+# Checking for missing values
+print(data.isnull().sum())
+
+# Handling categorical variables (if present)
+data = pd.get_dummies(data, drop_first=True)
+
+# Step 4: Splitting the dataset into features and target
+# Assuming the last column is the target variable
+X = data.iloc[:, :-1]  # Features
+y = data.iloc[:, -1]   # Target
+
+# Step 5: Split into Training and Test sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# Step 6: Model Building using DecisionTreeClassifier
+classifier = DecisionTreeClassifier(criterion='gini', random_state=42)
+
+# Step 7: Train the model
+classifier.fit(X_train, y_train)
+
+# Step 8: Prediction on the test set
+y_pred = classifier.predict(X_test)
+
+# Step 9: Evaluation
+accuracy = accuracy_score(y_test, y_pred)
+print(f"Accuracy: {accuracy * 100:.2f}%")
+
+# Confusion Matrix
+print("Confusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
+
+# Classification Report
+print("Classification Report:")
+print(classification_report(y_test, y_pred))
+
+# Step 10: Visualization of the decision tree
+plt.figure(figsize=(20,10))
+tree.plot_tree(classifier, filled=True, feature_names=X.columns, class_names=['No', 'Yes'], rounded=True)
+plt.show()
+
+
+
+
+
+
